@@ -1,14 +1,15 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 
-export default function sn() {
+function slug() {
 
     const router = useRouter();
-    const {sn} = router.query;
-
+    const {slug} = router.query;
   return (
     <div>
-      <p>Post : {sn}</p>
+      <h2>{slug}</h2>
     </div>
   )
 }
+
+export default slug
