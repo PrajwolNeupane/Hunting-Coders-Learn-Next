@@ -1,9 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
 import Head from 'next/head';
 import Link from 'next/link';
 
 const Blog = () => {
+
+  const [allBlog, setAllBlog] = useState([]);
+
+
+  useEffect(() => {
+    const getBlogData = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/blog");
+        const data = await response.json();
+        setAllBlog(data);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    getBlogData();
+  }, []);
+
   return (
     <>
       <Head>
@@ -13,24 +30,18 @@ const Blog = () => {
       </Head>
       <div className={styles.blog}>
         <h2>Latest Blogs</h2>
-        <div className='blog-item'>
-          <Link href={"/blogpost/how-to-learn-javascript"}>
-            <h3>How to learn JavaScript in 2023</h3>
-            <p>JavaScript is language used to built login in website</p>
-          </Link>
-        </div>
-        <div className='blog-item'>
-        <Link href={"/blogpost/how-to-learn-python"}>
-            <h3>How to learn Python in 2023</h3>
-            <p>Python is language used to AI</p>
-          </Link>
-        </div>
-        <div className='blog-item'>
-          <Link href={"/blogpost/Node"}>
-            <h3>How to learn Node in 2023</h3>
-            <p>Node help us to built in website</p>
-          </Link>
-        </div>
+        {
+          allBlog?.map((curr, indx) => {
+            return (
+              <div className='blog-item' key={indx}>
+                <Link href={`/blogpost/${curr.slug}`}>
+                  <h3>{curr.title}</h3>
+                  <p>{curr.content}</p>
+                </Link>
+              </div>
+            )
+          })
+        }
       </div>
     </>
   )
