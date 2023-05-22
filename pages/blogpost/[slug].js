@@ -1,19 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 function slug() {
 
-    const router = useRouter();
-    const {slug} = router.query;
+  const [blogData, setBlogData] = useState({});
+  const router = useRouter();
+  const { slug } = router.query;
+
+  useEffect(() => {
+    const getSingleBlogData = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/getBlog?slug=${slug}`);
+        const data = await response.json();
+        setBlogData(data);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    if (!router.isReady) {
+      return;
+    } else {
+      getSingleBlogData();
+    }
+  }, [router.isReady, slug]);
+
   return (
-    <div>
-      <h1>Title of the Blog {slug}</h1>
+    <>
+      <Head>
+        <title>Hunting Coder || {blogData?.title} </title>
+      </Head>
       <div>
-        <p>
-        Moving from Heroku to Render reduced my hosting bill by 80%, and my sites and databases are even faster.
-        </p>
+        <h1>{blogData?.title}</h1>
+        <div>
+          <p>
+            {blogData?.content}
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
